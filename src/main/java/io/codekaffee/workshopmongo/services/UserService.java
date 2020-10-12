@@ -30,7 +30,7 @@ public class UserService {
     public User updatUser(String id, User update) {
         return userRepository.findById(id).map(user -> {
             user.setName(update.getName());
-            user.setemail(update.getemail());
+            user.setEmail(update.getEmail());
             return userRepository.save(user);
         }).orElseThrow();
     }

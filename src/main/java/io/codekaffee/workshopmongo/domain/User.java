@@ -45,14 +45,14 @@ public class User implements Serializable{
     /**
      * @return the email
      */
-    public String getemail() {
+    public String getEmail() {
         return email;
     }
 
     /**
      * @param email the email to set
      */
-    public void setemail(String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
