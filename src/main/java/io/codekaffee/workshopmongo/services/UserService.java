@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import io.codekaffee.workshopmongo.domain.User;
 import io.codekaffee.workshopmongo.repositories.UserRepository;
 
-import java.util.Arrays;
+
 import java.util.List;
 
 @Service
