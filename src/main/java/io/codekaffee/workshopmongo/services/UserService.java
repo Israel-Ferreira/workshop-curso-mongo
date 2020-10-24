@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.codekaffee.workshopmongo.domain.User;
+import io.codekaffee.workshopmongo.dto.UserDTO;
 import io.codekaffee.workshopmongo.exceptions.ObjectNotFoundException;
 import io.codekaffee.workshopmongo.repositories.UserRepository;
 
@@ -27,6 +28,15 @@ public class UserService {
 
     public User createUser(User user) {
         return userRepository.save(user);
+    }
+
+    public User createUserFromDTO(UserDTO userDTO){
+        User user = this.fromDto(userDTO);
+        return this.createUser(user);
+    }
+
+    public User fromDto(UserDTO userDTO){
+        return new User(userDTO.getName(), userDTO.getEmail());
     }
 
     public User updatUser(String id, User update) {
