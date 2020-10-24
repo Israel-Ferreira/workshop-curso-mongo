@@ -47,6 +47,14 @@ public class UserService {
         }).orElseThrow(() ->  this.notFoundException());
     }
 
+    public void delete(String id){
+        this.getUserById(id);
+        
+        userRepository.deleteById(id);
+    }
+
+
+
 
     private ObjectNotFoundException notFoundException(){
         return new ObjectNotFoundException("Objeto Não encontrado");
