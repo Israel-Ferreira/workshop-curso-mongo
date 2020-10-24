@@ -39,17 +39,24 @@ public class UserService {
         return new User(userDTO.getName(), userDTO.getEmail());
     }
 
-    public User updatUser(String id, User update) {
+    public User update(String id, UserDTO updateDto) {
+        var update = this.fromDto(updateDto);
+        
         return userRepository.findById(id).map(user -> {
-            user.setName(update.getName());
-            user.setEmail(update.getEmail());
+            this.updateData(user, update);
             return userRepository.save(user);
         }).orElseThrow(() ->  this.notFoundException());
     }
 
+
+    private void updateData(User obj, User newObj){
+        obj.setName(newObj.getName());
+        obj.setEmail(newObj.getEmail());
+    }
+
     public void delete(String id){
         this.getUserById(id);
-        
+
         userRepository.deleteById(id);
     }
 
