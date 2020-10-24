@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.codekaffee.workshopmongo.domain.User;
+import io.codekaffee.workshopmongo.exceptions.ObjectNotFoundException;
 import io.codekaffee.workshopmongo.repositories.UserRepository;
 
 
@@ -20,7 +21,8 @@ public class UserService {
     }
 
     public User getUserById(String id) {
-        return userRepository.findById(id).orElseThrow();
+        return userRepository.findById(id)
+            .orElseThrow(() -> this.notFoundException());
     }
 
     public User createUser(User user) {
@@ -32,7 +34,12 @@ public class UserService {
             user.setName(update.getName());
             user.setEmail(update.getEmail());
             return userRepository.save(user);
-        }).orElseThrow();
+        }).orElseThrow(() ->  this.notFoundException());
+    }
+
+
+    private ObjectNotFoundException notFoundException(){
+        return new ObjectNotFoundException("Objeto Não encontrado");
     }
 
 }

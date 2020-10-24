@@ -1,0 +1,22 @@
+package io.codekaffee.workshopmongo.resources.exceptions;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import io.codekaffee.workshopmongo.exceptions.ObjectNotFoundException;
+
+@RestControllerAdvice
+public class ResourceExceptionHandler {
+
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public ResponseEntity<StandardError> objectNotFound(ObjectNotFoundException e, HttpServletRequest request){
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        Long timestamp = System.currentTimeMillis();
+        StandardError err = new StandardError(timestamp, status.value(), "Objeto não encontrado", e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+}
