@@ -1,19 +1,27 @@
 package io.codekaffee.workshopmongo.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 
-@Document(collection = "users2")
+@Document(collection = "user")
 public class User implements Serializable{
     private static final long serialVersionUID = 1L;
 
-    @Id
+    @MongoId(FieldType.OBJECT_ID)
     private String id;
+
     private String name;
     private String email;
+
+    @DBRef(lazy = true)
+    private List<Post> posts = new ArrayList<>();
 
     public User(){}
 
@@ -61,7 +69,14 @@ public class User implements Serializable{
         return this.id;
     }
 
+    public List<Post> getPosts() {
+        System.out.println(posts);
+        return posts;
+    }
 
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
 
     @Override
     public String toString() {
@@ -96,11 +111,8 @@ public class User implements Serializable{
             return false;
         User other = (User) obj;
         if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
+            return other.id == null;
+        } else return id.equals(other.id);
     }
 
 }

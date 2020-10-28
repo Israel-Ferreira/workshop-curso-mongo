@@ -14,6 +14,7 @@ public class PostService implements  ICrudService<Post> {
     @Autowired
     private PostRepository postRepository;
 
+
     @Override
     public List<Post> findAll() {
         return postRepository.findAll();
@@ -25,7 +26,6 @@ public class PostService implements  ICrudService<Post> {
         return postRepository.findById(id).orElseThrow(this::objectNotFoundException);
     }
 
-    @Override
     public Post create(Post obj) {
         return postRepository.save(obj);
     }
@@ -36,7 +36,6 @@ public class PostService implements  ICrudService<Post> {
             post.setTitle(obj.getTitle());
             post.setBody(obj.getBody());
             post.setDate(obj.getDate());
-            post.setAuthor(obj.getAuthor());
 
             return postRepository.save(post);
         }).orElseThrow(this::objectNotFoundException);

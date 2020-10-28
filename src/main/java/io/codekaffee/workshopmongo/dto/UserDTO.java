@@ -1,7 +1,8 @@
 package io.codekaffee.workshopmongo.dto;
 
 import java.io.Serializable;
-
+import java.util.List;
+import io.codekaffee.workshopmongo.domain.Post;
 import io.codekaffee.workshopmongo.domain.User;
 
 public class UserDTO implements Serializable {
@@ -14,12 +15,15 @@ public class UserDTO implements Serializable {
     private String name;
     private String email;
 
+    private List<Post> posts;
+
     public UserDTO(){}
 
     public UserDTO(User user){
         this.id = user.getId();
         this.email = user.getEmail();
         this.name = user.getName();
+        this.posts = user.getPosts();
     }
 
     public UserDTO(String id, String name, String email){
@@ -70,5 +74,11 @@ public class UserDTO implements Serializable {
         this.email = email;
     }
 
-    
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
 }

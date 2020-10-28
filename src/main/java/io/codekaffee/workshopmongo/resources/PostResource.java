@@ -1,15 +1,15 @@
 package io.codekaffee.workshopmongo.resources;
 
 import io.codekaffee.workshopmongo.domain.Post;
+import io.codekaffee.workshopmongo.dto.PostDTO;
 import io.codekaffee.workshopmongo.services.PostService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -18,20 +18,15 @@ public class PostResource {
     @Autowired
     private PostService postService;
 
+
     @GetMapping
-    public ResponseEntity<List<Post>> getAll(){
+    public ResponseEntity<List<PostDTO>> getAll(){
         List<Post> posts =  this.postService.findAll();
-        return  ResponseEntity.ok(posts);
+        var listPosts = posts.stream().map(PostDTO::new).collect(Collectors.toList());
+        return  ResponseEntity.ok(listPosts);
     }
 
-    @PostMapping
-    public ResponseEntity<Void> createPost(@RequestBody Post post){
-        var postObj =  this.postService.create(post);
-        System.out.println(post.getId());
 
-        URI uri =  getPostUrl(postObj);
-        return ResponseEntity.created(uri).build();
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Post> getPost(@PathVariable("id") ObjectId id){
@@ -49,14 +44,5 @@ public class PostResource {
     public ResponseEntity<Void> removePost(@PathVariable("id") ObjectId id){
         this.postService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-
-
-
-    private URI getPostUrl(Post post){
-        return ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(post.getId()).toUri();
     }
 }

@@ -3,6 +3,7 @@ package io.codekaffee.workshopmongo.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import io.codekaffee.workshopmongo.domain.Post;
 import io.codekaffee.workshopmongo.domain.User;
 import io.codekaffee.workshopmongo.dto.UserDTO;
 import io.codekaffee.workshopmongo.exceptions.ObjectNotFoundException;
@@ -13,8 +14,13 @@ import java.util.List;
 
 @Service
 public class UserService {
+
     @Autowired
     private UserRepository userRepository;
+
+
+    @Autowired 
+    private PostService postService;
 
     public List<User> findAll() {
         var users = userRepository.findAll();
@@ -24,6 +30,15 @@ public class UserService {
     public User getUserById(String id) {
         return userRepository.findById(id)
             .orElseThrow(() -> this.notFoundException());
+    }
+
+
+    public User createUserPost(String id, Post post){
+        User user = this.getUserById(id);
+        Post userPost = postService.create(post);
+
+        user.getPosts().add(userPost);
+        return userRepository.save(user);
     }
 
     public User createUser(User user) {

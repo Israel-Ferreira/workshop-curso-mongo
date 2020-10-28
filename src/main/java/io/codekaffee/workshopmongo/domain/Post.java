@@ -1,19 +1,17 @@
 package io.codekaffee.workshopmongo.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Document
-public class Post {
-//     private static final long serialVersionUID = 1L;
+public class Post implements Serializable {
+     private static final long serialVersionUID = 1L;
 
 
     @MongoId(FieldType.OBJECT_ID)
@@ -26,7 +24,6 @@ public class Post {
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate date;
 
-    private User author;
 
     public Post(){ }
 
@@ -34,7 +31,6 @@ public class Post {
         this.title = title;
         this.body = body;
         this.date = date;
-        this.author = author;
     }
 
     public String getTitle() {
@@ -51,14 +47,6 @@ public class Post {
 
     public void setBody(String body) {
         this.body = body;
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(User author) {
-        this.author = author;
     }
 
     public LocalDate getDate() {
