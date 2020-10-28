@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.codekaffee.workshopmongo.domain.User;
+import io.codekaffee.workshopmongo.dto.PostDTO;
 import io.codekaffee.workshopmongo.dto.UserDTO;
 import io.codekaffee.workshopmongo.services.UserService;
 
@@ -23,8 +24,6 @@ public class UserResource {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private PostResource postResource;
 
     @GetMapping
     public ResponseEntity<List<UserDTO>> findAll() {
@@ -77,5 +76,17 @@ public class UserResource {
 
         return ResponseEntity.created(uri).build();
     }
+
+    @GetMapping("/{id}/posts")
+    public ResponseEntity<List<PostDTO>> getUserPosts(@PathVariable("id") String id){
+        User author = userService.getUserById(id);
+        List<PostDTO> posts =  author.getPosts()
+            .stream()
+            .map(post -> new PostDTO(post, author))
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(posts);
+    }
+
 
 }
