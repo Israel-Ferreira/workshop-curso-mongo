@@ -67,7 +67,7 @@ public class UserResource {
     }
 
 
-    @GetMapping("/{id}/posts")
+    @GetMapping("/{id}/user-posts")
     public ResponseEntity<List<PostDTO>> getUserPosts(@PathVariable("id") String id){
         User author = userService.getUserById(id);
         List<PostDTO> posts =  author.getPosts()

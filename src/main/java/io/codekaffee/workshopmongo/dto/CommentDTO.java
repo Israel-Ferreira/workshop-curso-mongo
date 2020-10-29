@@ -2,9 +2,16 @@ package io.codekaffee.workshopmongo.dto;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class CommentDTO {
     private String text;
     private AuthorDTO author;
+
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate date;
 
     public CommentDTO(){}

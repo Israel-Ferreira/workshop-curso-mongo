@@ -2,7 +2,9 @@ package io.codekaffee.workshopmongo.resources;
 
 import io.codekaffee.workshopmongo.domain.Post;
 import io.codekaffee.workshopmongo.domain.User;
+import io.codekaffee.workshopmongo.dto.CommentDTO;
 import io.codekaffee.workshopmongo.dto.PostDTO;
+import io.codekaffee.workshopmongo.repositories.PostRepository;
 import io.codekaffee.workshopmongo.repositories.UserRepository;
 import io.codekaffee.workshopmongo.services.PostService;
 import org.bson.types.ObjectId;
@@ -15,7 +17,9 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
 
 
 @RestController
@@ -24,55 +28,79 @@ public class PostResource {
     @Autowired
     private PostService postService;
 
-    @Autowired 
+    @Autowired
     private UserRepository userRepository;
 
-    @PostMapping
-    public ResponseEntity<Map<String, Object>> createPost(@RequestBody Post newPost){
-        Post post =  postService.create(newPost);
+    @Autowired
+    private PostRepository postRepository;
 
-        String userId =  post.getAuthor().getId();
-        User author =  userRepository.findById(userId).get();
+    @GetMapping
+    public ResponseEntity<List<Post>> getAll(@RequestParam String title) {
+        Function<String, List<Post>> postsSearch =  (postTitle) -> {
+            if(postTitle.equals(null) || postTitle.isEmpty()){
+                return this.postService.findAll();
+            }else{
+                return this.postService.searchByTitle(title);
+            }
+        };
+
+        List<Post> posts =  postsSearch.apply(title);
+
+
+        return ResponseEntity.ok(posts);
+    }
+
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> createPost(@RequestBody Post newPost) {
+        Post post = postService.create(newPost);
+
+        String userId = post.getAuthor().getId();
+        User author = userRepository.findById(userId).get();
 
         author.getPosts().add(post);
         userRepository.save(author);
 
-
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(post.getId()).toUri();
 
-        Map<String, Object> objectResp =  new HashMap<>();
+        Map<String, Object> objectResp = new HashMap<>();
         objectResp.put("post", new PostDTO(post));
         objectResp.put("message", "Post criado com sucesso");
-
 
         return ResponseEntity.created(uri).body(objectResp);
     }
 
 
-    @GetMapping
-    public ResponseEntity<List<PostDTO>> getAll(){
-        List<Post> posts =  this.postService.findAll();
-        var listPosts = posts.stream().map(PostDTO::new).collect(Collectors.toList());
-        return  ResponseEntity.ok(listPosts);
-    }
-
-
 
     @GetMapping("/{id}")
-    public ResponseEntity<Post> getPost(@PathVariable("id") ObjectId id){
+    public ResponseEntity<Post> getPost(@PathVariable("id") ObjectId id) {
         Post post = this.postService.findById(id);
-        return  ResponseEntity.ok(post);
+        return ResponseEntity.ok(post);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Post> update(@PathVariable("id") ObjectId id, @RequestBody Post obj){
-        var post =  this.postService.update(id, obj);
+    public ResponseEntity<Post> update(@PathVariable("id") ObjectId id, @RequestBody Post obj) {
+        var post = this.postService.update(id, obj);
         return ResponseEntity.ok(post);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removePost(@PathVariable("id") ObjectId id){
+    public ResponseEntity<Void> removePost(@PathVariable("id") ObjectId id) {
         this.postService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/comments")
+    public ResponseEntity<Map<String, Object>> addComment(@PathVariable("id") ObjectId id,
+            @RequestBody CommentDTO comment) {
+        Post post = postService.findById(id);
+        post.getComments().add(comment);
+
+        var obj = postRepository.save(post);
+
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("Post", obj);
+
+        return ResponseEntity.ok(map);
     }
 }

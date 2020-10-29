@@ -7,6 +7,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import java.util.List;
 
 @Service
@@ -36,6 +37,9 @@ public class PostService implements  ICrudService<Post> {
             post.setTitle(obj.getTitle());
             post.setBody(obj.getBody());
             post.setDate(obj.getDate());
+            
+            post.setAuthor(obj.getAuthor());
+            post.setComments(obj.getComments());
 
             return postRepository.save(post);
         }).orElseThrow(this::objectNotFoundException);
@@ -44,6 +48,11 @@ public class PostService implements  ICrudService<Post> {
     @Override
     public void delete(ObjectId id) {
         this.postRepository.deleteById(id);
+    }
+
+
+    public List<Post> searchByTitle(String title){
+        return this.postRepository.findByTitleContaining(title);
     }
 
 
