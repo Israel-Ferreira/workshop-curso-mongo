@@ -6,6 +6,7 @@ import io.codekaffee.workshopmongo.dto.CommentDTO;
 import io.codekaffee.workshopmongo.dto.PostDTO;
 import io.codekaffee.workshopmongo.repositories.PostRepository;
 import io.codekaffee.workshopmongo.repositories.UserRepository;
+import io.codekaffee.workshopmongo.resources.util.Url;
 import io.codekaffee.workshopmongo.services.PostService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+
 
 
 
@@ -35,12 +36,15 @@ public class PostResource {
     private PostRepository postRepository;
 
     @GetMapping
-    public ResponseEntity<List<Post>> getAll(@RequestParam String title) {
+    public ResponseEntity<List<Post>> getAll(@RequestParam(value = "title", required = false, defaultValue = "") String title) {
+        System.out.println(title);
+    
         Function<String, List<Post>> postsSearch =  (postTitle) -> {
             if(postTitle.equals(null) || postTitle.isEmpty()){
                 return this.postService.findAll();
             }else{
-                return this.postService.searchByTitle(title);
+                String titleDecoded =  Url.decodeParam(postTitle);
+                return this.postService.searchByTitle(titleDecoded);
             }
         };
 
