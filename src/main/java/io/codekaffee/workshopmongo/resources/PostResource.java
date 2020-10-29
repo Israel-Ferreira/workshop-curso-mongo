@@ -1,14 +1,20 @@
 package io.codekaffee.workshopmongo.resources;
 
 import io.codekaffee.workshopmongo.domain.Post;
+import io.codekaffee.workshopmongo.domain.User;
 import io.codekaffee.workshopmongo.dto.PostDTO;
+import io.codekaffee.workshopmongo.repositories.UserRepository;
 import io.codekaffee.workshopmongo.services.PostService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -17,6 +23,30 @@ import java.util.stream.Collectors;
 public class PostResource {
     @Autowired
     private PostService postService;
+
+    @Autowired 
+    private UserRepository userRepository;
+
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> createPost(@RequestBody Post newPost){
+        Post post =  postService.create(newPost);
+
+        String userId =  post.getAuthor().getId();
+        User author =  userRepository.findById(userId).get();
+
+        author.getPosts().add(post);
+        userRepository.save(author);
+
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(post.getId()).toUri();
+
+        Map<String, Object> objectResp =  new HashMap<>();
+        objectResp.put("post", new PostDTO(post));
+        objectResp.put("message", "Post criado com sucesso");
+
+
+        return ResponseEntity.created(uri).body(objectResp);
+    }
 
 
     @GetMapping

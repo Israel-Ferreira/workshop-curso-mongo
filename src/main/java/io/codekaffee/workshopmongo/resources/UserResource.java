@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.codekaffee.workshopmongo.domain.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,22 +66,13 @@ public class UserResource {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PostMapping(value = "/{Id}/posts")
-    public ResponseEntity<User> createUserPost(@PathVariable("Id") String id, @RequestBody Post post) {
-        
-        var userWithPost =  userService.createUserPost(id, post);
-
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(userWithPost.getId()).toUri();
-
-        return ResponseEntity.created(uri).build();
-    }
 
     @GetMapping("/{id}/posts")
     public ResponseEntity<List<PostDTO>> getUserPosts(@PathVariable("id") String id){
         User author = userService.getUserById(id);
         List<PostDTO> posts =  author.getPosts()
             .stream()
-            .map(post -> new PostDTO(post, author))
+            .map(post -> new PostDTO(post))
             .collect(Collectors.toList());
 
         return ResponseEntity.ok(posts);

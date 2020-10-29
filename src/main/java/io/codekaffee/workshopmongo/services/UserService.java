@@ -38,6 +38,7 @@ public class UserService {
         Post userPost = postService.create(post);
 
         user.getPosts().add(userPost);
+
         return userRepository.save(user);
     }
 

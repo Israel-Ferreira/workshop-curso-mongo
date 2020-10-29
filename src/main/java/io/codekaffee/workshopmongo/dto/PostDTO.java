@@ -1,8 +1,6 @@
 package io.codekaffee.workshopmongo.dto;
 
 import io.codekaffee.workshopmongo.domain.Post;
-import io.codekaffee.workshopmongo.domain.User;
-
 import java.time.LocalDate;
 
 public class PostDTO {
@@ -14,23 +12,16 @@ public class PostDTO {
 
     private AuthorDTO author;
 
-    public PostDTO(Post post){
-        this.id =  post.getId();
+    public PostDTO(Post post) {
+        this.id = post.getId();
         this.title = post.getTitle();
 
         this.body = post.getBody();
         this.date = post.getDate();
+
+        if (post.getAuthor() != null)
+            this.author = post.getAuthor();
     }
-
-    public PostDTO(Post post, User author){
-        this.id =  post.getId();
-        this.title = post.getTitle();
-
-        this.body = post.getBody();
-        this.date = post.getDate();
-        this.author = new AuthorDTO(author);
-    }
-
 
     public String getId() {
         return id;
