@@ -52,7 +52,7 @@ public class PostService implements  ICrudService<Post> {
 
 
     public List<Post> searchByTitle(String title){
-        return this.postRepository.findByTitleContaining(title);
+        return this.postRepository.findByTitleQuery(title);
     }
 
 
